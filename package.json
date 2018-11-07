@@ -11,6 +11,12 @@
 		"type": "git",
 		"url": "https://github.com/Sergey-Ubogov/hermione-run-tests"
 	},
+	"contributors": [
+		{
+			"name": "Vadim Nikolaev",
+			"email": "defntvdm@gmail.com"
+		}
+	],
 	"keywords": [
 		"hermione",
 		"tests",
