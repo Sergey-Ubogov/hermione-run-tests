@@ -1,7 +1,4 @@
-const jsonServer = require('json-server');
-const Hermione = require('hermione');
-
-function runJsonServer(pathToApiStub, onStart) {
+function runJsonServer(jsonServer, pathToApiStub, onStart) {
     let server = jsonServer.create();
     const router = jsonServer.router(pathToApiStub);
     const middlewares = jsonServer.defaults();
@@ -15,9 +12,7 @@ function runJsonServer(pathToApiStub, onStart) {
     return server;
 }
 
-async function runHermione(pathToTests, hermioneOptions, onSuccess, onFail) {
-    const hermione = new Hermione('.hermione.conf.js');
-
+async function runHermione(hermione, pathToTests, hermioneOptions, onSuccess, onFail) {
     try {
         const success = await hermione.run([pathToTests], hermioneOptions);
         console.info('Success:', success);
@@ -29,11 +24,11 @@ async function runHermione(pathToTests, hermioneOptions, onSuccess, onFail) {
     }
 }
 
-function runTests(tests, indexTest = 0) {
+function runTests(tests, hermione, jsonServer, indexTest = 0) {
     if (indexTest === tests.length) return;
     const test = tests[indexTest];
-    const server = runJsonServer(test.pathToApiStub, () => {
-        runHermione(test.pathToTests, test.hermioneOprions, () => {
+    const server = runJsonServer(jsonServer, test.pathToApiStub, () => {
+        runHermione(hermione, test.pathToTests, test.hermioneOprions, () => {
             server.close(() => {
                 console.log('JSON Server is off');
 
