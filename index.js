@@ -1,10 +1,10 @@
-function runJsonServer(jsonServer, pathToApiStub, onStart) {
+function runJsonServer(jsonServer, pathToApiStub, port, onStart) {
     let server = jsonServer.create();
     const router = jsonServer.router(pathToApiStub);
     const middlewares = jsonServer.defaults();
     server.use(middlewares);
     server.use(router);
-    server = server.listen(3000, () => {
+    server = server.listen(port, () => {
         console.log('JSON Server is on');
         onStart();
     });
@@ -24,15 +24,15 @@ async function runHermione(hermione, pathToTests, hermioneOptions, onSuccess, on
     }
 }
 
-function runTests(tests, hermione, jsonServer, indexTest = 0) {
+function runTests(tests, hermione, jsonServer, indexTest = 0, port = 3000) {
     if (indexTest === tests.length) return;
     const test = tests[indexTest];
-    const server = runJsonServer(jsonServer, test.pathToApiStub, () => {
-        runHermione(hermione, test.pathToTests, test.hermioneOprions, () => {
+    const server = runJsonServer(jsonServer, test.pathToApiStub, port, () => {
+        runHermione(hermione, test.pathToTests, test.hermioneOptions, () => {
             server.close(() => {
                 console.log('JSON Server is off');
 
-                runTests(tests, indexTest + 1);
+                runTests(tests, hermione, jsonServer, indexTest + 1, port);
             });
         }, () => {
             server.close(() => {
