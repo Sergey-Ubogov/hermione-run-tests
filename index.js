@@ -12,7 +12,8 @@ function runJsonServer(jsonServer, pathToApiStub, port, onStart) {
     return server;
 }
 
-async function runHermione(hermione, pathToTests, hermioneOptions, onSuccess, onFail) {
+async function runHermione(Hermione, pathToTests, hermioneOptions, hermioneConfigPath, onSuccess, onFail) {
+    const hermione = new Hermione(hermioneConfigPath);
     try {
         const success = await hermione.run([pathToTests], hermioneOptions);
         console.info('Success:', success);
@@ -24,15 +25,20 @@ async function runHermione(hermione, pathToTests, hermioneOptions, onSuccess, on
     }
 }
 
-function runTests(tests, hermione, jsonServer, indexTest = 0, port = 3000) {
+function runTests(tests, Hermione, jsonServer, options = {}) {
+    let {indexTest, port, hermioneConfigPath} = options;
+    if (indexTest === undefined) indexTest = 0;
+    if (port === undefined) port = 3000;
+    if (hermioneConfigPath === undefined) hermioneConfigPath = '.hermione.conf.js';
+
     if (indexTest === tests.length) return;
     const test = tests[indexTest];
     const server = runJsonServer(jsonServer, test.pathToApiStub, port, () => {
-        runHermione(hermione, test.pathToTests, test.hermioneOptions, () => {
+        runHermione(Hermione, test.pathToTests, test.hermioneOptions, hermioneConfigPath, () => {
             server.close(() => {
                 console.log('JSON Server is off');
 
-                runTests(tests, hermione, jsonServer, indexTest + 1, port);
+                runTests(tests, Hermione, jsonServer, {port, hermioneConfigPath, indexTest: indexTest + 1});
             });
         }, () => {
             server.close(() => {
@@ -42,4 +48,4 @@ function runTests(tests, hermione, jsonServer, indexTest = 0, port = 3000) {
     });
 }
 
-module.export = runTests;
+module.exports = runTests;
