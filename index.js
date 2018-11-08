@@ -1,51 +1,49 @@
-function runJsonServer(jsonServer, pathToApiStub, port, onStart) {
+async function runJsonServer(jsonServer, pathToApiStub, port) {
     let server = jsonServer.create();
     const router = jsonServer.router(pathToApiStub);
     const middlewares = jsonServer.defaults();
     server.use(middlewares);
     server.use(router);
-    server = server.listen(port, () => {
-        console.log('JSON Server is on');
-        onStart();
-    });
+    server = await server.listen(port);
+
+    console.log(`JSON Server started on ${port} port`);
 
     return server;
 }
 
-async function runHermione(Hermione, pathToTests, hermioneOptions, hermioneConfigPath, onSuccess, onFail) {
+async function runHermione(Hermione, testPaths, hermioneOptions, hermioneConfigPath) {
     const hermione = new Hermione(hermioneConfigPath);
     try {
-        const success = await hermione.run([pathToTests], hermioneOptions);
-        console.info('Success:', success);
-        if (success) onSuccess();
-        else onFail();
+        const testPassed = await hermione.run(testPaths, hermioneOptions);
+        console.info(`${testPaths} passed:`, testPassed);
+        return testPassed;
     } catch(e) {
         console.log(e.stack);
-        onFail();
+        return 0;
     }
 }
 
-function runTests(tests, Hermione, jsonServer, options = {}) {
-    let {indexTest, port, hermioneConfigPath} = options;
-    if (indexTest === undefined) indexTest = 0;
+async function runTests(tests, Hermione, jsonServer, options = {}) {
+    let {port, hermioneConfigPath, hermioneOptions, countRetry} = options;
     if (port === undefined) port = 3000;
+    if (countRetry === undefined) countRetry = 1;
     if (hermioneConfigPath === undefined) hermioneConfigPath = '.hermione.conf.js';
 
-    if (indexTest === tests.length) return;
-    const test = tests[indexTest];
-    const server = runJsonServer(jsonServer, test.pathToApiStub, port, () => {
-        runHermione(Hermione, test.pathToTests, test.hermioneOptions, hermioneConfigPath, () => {
-            server.close(() => {
-                console.log('JSON Server is off');
+    for (let indexTest = 0; indexTest < tests.length; indexTest++) {
+    	const test = tests[indexTest];
+    	let testCountRetry = test.countRetry || countRetry;
+		let testPassed = false;
 
-                runTests(tests, Hermione, jsonServer, {port, hermioneConfigPath, indexTest: indexTest + 1});
-            });
-        }, () => {
-            server.close(() => {
-                console.log('JSON Server is off');
-            });
-        });
-    });
+    	while (testCountRetry--) {
+			const server = await runJsonServer(jsonServer, test.pathToApiStub, port);
+
+			testPassed = await runHermione(Hermione, test.testPaths, test.hermioneOptions || hermioneOptions, hermioneConfigPath);
+			server.close(() => console.log('JSON Server is off'));
+
+			if (testPassed) break;
+		}
+		if (!testPassed) break;
+	}
 }
 
 module.exports = runTests;
