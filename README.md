@@ -102,23 +102,23 @@ and by running the command ```node autorun-tests.js``` your tests will run alter
  * @param {
  *      {
  *          pathToApiStub: string,
- *          countRetry: number, //priority over options
+ *          countRetry?: number,
  *          testPaths: string | string[],
- *          hermioneOptions: { 
+ *          hermioneOptions?: {
  *              browsers, sets, grep, updateRefs: boolean, reporters, inspectMode
- *          } //priority over options
+ *          }
  *      }[]
  * } tests - Array with tests.
  * @param {object} Hermione - your Hermione class(from package 'hermione')
  * @param {object} jsonServer - your jsonServer class(from package 'json-server')
  * @param {
  *     {
- *         port: number,
- *         hermioneConfigPath: string,
- *         hermioneOptions: {
+ *         port?: number,
+ *         hermioneConfigPath?: string,
+ *         hermioneOptions?: {
  *              browsers, sets, grep, updateRefs: boolean, reporters, inspectMode
  *         },
- *         countRetry: number
+ *         countRetry?: number
  *     }
- * } options
+ * } options?
 ```
