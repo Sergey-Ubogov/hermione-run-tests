@@ -19,7 +19,7 @@ async function runHermione(Hermione, testPaths, hermioneOptions, hermioneConfigP
         return testPassed;
     } catch(e) {
         console.log(e.stack);
-        return 0;
+        return false;
     }
 }
 
@@ -54,9 +54,8 @@ async function runTests(tests, Hermione, jsonServer, options = {}) {
     if (countRetry === undefined) countRetry = 1;
     if (hermioneConfigPath === undefined) hermioneConfigPath = '.hermione.conf.js';
 
-    for (let indexTest = 0; indexTest < tests.length; indexTest++) {
-    	const test = tests[indexTest];
-    	let testCountRetry = test.countRetry || countRetry;
+    for (const test of tests) {
+        let testCountRetry = test.countRetry || countRetry;
 		let testPassed = false;
 
     	while (testCountRetry--) {
