@@ -1,7 +1,7 @@
 {
 	"name": "hermione-run-tests",
 	"description": "Run tests for each stub api consistently",
-	"version": "0.3.0",
+	"version": "1.0.0",
 	"scripts": {
 		"selenium-standalone": "selenium-standalone",
 		"json-server": "json-server",

@@ -23,6 +23,31 @@ async function runHermione(Hermione, testPaths, hermioneOptions, hermioneConfigP
     }
 }
 
+/**
+ * Run tests for each stub api consistently
+ * @param {
+ *      {
+ *          pathToApiStub: string,
+ *          countRetry?: number,
+ *          testPaths: string | string[],
+ *          hermioneOptions?: {
+ *              browsers, sets, grep, updateRefs: boolean, reporters, inspectMode
+ *          }
+ *      }[]
+ * } tests - Array with tests.
+ * @param {object} Hermione - your Hermione class(from package 'hermione')
+ * @param {object} jsonServer - your jsonServer class(from package 'json-server')
+ * @param {
+ *     {
+ *         port?: number,
+ *         hermioneConfigPath?: string,
+ *         hermioneOptions?: {
+ *              browsers, sets, grep, updateRefs: boolean, reporters, inspectMode
+ *         },
+ *         countRetry?: number
+ *     }
+ * } options?
+ */
 async function runTests(tests, Hermione, jsonServer, options = {}) {
     let {port, hermioneConfigPath, hermioneOptions, countRetry} = options;
     if (port === undefined) port = 3000;
