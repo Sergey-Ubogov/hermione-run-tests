@@ -98,6 +98,7 @@ and by running the command ```node autorun-tests.js``` your tests will run alter
 ![alt demonstration image](https://github.com/Sergey-Ubogov/hermione-run-tests/blob/master/static/example-image.png)
 
 # Arguments
+```js
  * @param {
  *      {
  *          pathToApiStub: string,
@@ -120,4 +121,4 @@ and by running the command ```node autorun-tests.js``` your tests will run alter
  *         countRetry: number
  *     }
  * } options
-
+```
