@@ -1,3 +1,8 @@
 test.js
 /node_modules/
 /.idea/
+/api-stubs/
+/helpers/
+/hermione/
+.hermione.conf.js
+autorun-tests.js

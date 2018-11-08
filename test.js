@@ -1,3 +1,0 @@
-runTests = require('./index');
-
-runTests([]);
