@@ -2,13 +2,13 @@
 Run tests for each stub api consistently
 
 # Install
-```code bash
+```bash
 npm install --save-dev hermione-run-tests
 ```
 # Usage
   for example you have a .hermione.conf.js like this:
 
-```code javascript
+```js
 module.exports = {
     baseUrl: 'http://localhost',
     gridUrl: 'http://localhost:4444/wd/hub',
@@ -29,9 +29,11 @@ module.exports = {
     screenshotsDir: 'hermione/screens/images'
 };
 ```
-and yoy have two tests
-/tests/test1.js
-```code javascript
+
+  and you have two tests
+  /tests/test1.js
+
+```js
 describe('test1', function() {
     it('rub to dollar', function() {
         return this.browser
@@ -42,7 +44,7 @@ describe('test1', function() {
 });
 ```
 and /tests/test2.js
-```code javascript
+```js
 describe('test2', function() {
     it('euro to dollar', function() {
         return this.browser
@@ -55,24 +57,30 @@ describe('test2', function() {
 
 and let's imagine that each test needs its own API:
 /api-stub/stub1.json
-```code json
+
+```json
 {
 	"stub": {
 		"payload": "1"
 	}
 }
 ```
+
 /api-stub/stub2.json
-```code json
+
+```json
 {
 	"stub": {
 		"payload": "2"
 	}
 }
+```
+
 you want to run every test for your API-stub.
 just create the following file:
 autorun-tests.js
-```code javascript
+
+```js
 const runTests = require('hermione-run-tests');
 const Hermione = require('hermione');
 const jsonServer = require('json-server');
@@ -84,5 +92,32 @@ const tests = [
 
 runTests(tests, Hermione, jsonServer);
 ```
+
 and by running the command ```node autorun-tests.js``` your tests will run alternately:
+
+![alt demonstration image](https://github.com/Sergey-Ubogov/hermione-run-tests/blob/master/static/example-image.png)
+
+# Arguments
+ * @param {
+ *      {
+ *          pathToApiStub: string,
+ *          countRetry: number, //priority over options
+ *          testPaths: string | string[],
+ *          hermioneOptions: { 
+ *              browsers, sets, grep, updateRefs: boolean, reporters, inspectMode
+ *          } //priority over options
+ *      }[]
+ * } tests - Array with tests.
+ * @param {object} Hermione - your Hermione class(from package 'hermione')
+ * @param {object} jsonServer - your jsonServer class(from package 'json-server')
+ * @param {
+ *     {
+ *         port: number,
+ *         hermioneConfigPath: string,
+ *         hermioneOptions: {
+ *              browsers, sets, grep, updateRefs: boolean, reporters, inspectMode
+ *         },
+ *         countRetry: number
+ *     }
+ * } options
 
